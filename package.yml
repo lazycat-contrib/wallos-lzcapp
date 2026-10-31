@@ -1,0 +1,18 @@
+package: community.lazycat.app.wallos
+version: 5.10.3
+name: Wallos
+description: Self-hosted personal subscription and recurring expense tracker with SQLite storage.
+min_os_version: "1.5.0"
+homepage: https://github.com/ellite/Wallos
+author: ellite
+license: GPL-3.0
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: Wallos
+    description: 自托管个人订阅与周期支出管理，支持续费日期、预算统计和提醒配置，使用内置 SQLite。
+  en:
+    name: Wallos
+    description: Self-hosted personal subscription and recurring expense tracker with SQLite storage.

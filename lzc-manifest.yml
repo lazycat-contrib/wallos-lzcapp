@@ -1,0 +1,38 @@
+application:
+  subdomain: wallos
+  multi_instance: false
+  upstreams:
+    - location: /
+      backend: http://wallos:80/
+  injects:
+    - id: login-autofill
+      on: browser
+      when:
+        - /login.php
+      do:
+        - src: builtin://simple-inject-password
+          params:
+            user: |-
+              {{ .U.login_user | replace "\r" "" | replace "\n" "\n              " }}
+            password: |-
+              {{ .U.login_secret | replace "\r" "" | replace "\n" "\n              " }}
+            userSelector: '#username'
+            passwordSelector: '#password'
+            autoSubmit: false
+services:
+  wallos:
+    # upstream: docker.io/bellamy/wallos:5.10.3
+    image: docker.1ms.run/bellamy/wallos:5.10.3
+    environment:
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/db:/var/www/html/db
+      - /lzcapp/var/logos:/var/www/html/images/uploads/logos
+usage: |
+  Wallos 管理个人订阅与周期支出。首次须在原应用注册页面手动创建账号，填写邮箱并确认密码；请使用与部署参数一致的用户名和密码。
+  部署参数仅用于/login.php登录填充，不自动创建、修改或重置数据库账号。应用内改密后应同步参数；填充不自动提交。
+  先完成首次注册再向其他人开放，避免他人抢先创建首个管理账户。保留懒猫入口鉴权，无匿名公共路径；当前填充账号仅供可信成员使用。
+  数据库和上传图标分别在/lzcapp/var/db与/lzcapp/var/logos，卸载前请一起备份；无需外部数据库。
+  保留原入口、进程权限管理、cron任务及镜像健康检查；不强改容器用户，不新增smoke、启动测试作业或文件选择器拦截。
+  邮件、通知及汇率等功能依赖原应用设置和外部服务，需要自行配置；不包含任何付费服务或银行凭据。
+  未验证实机启动、注册、登录填充、订阅增删改、通知、定时任务、备份或持久化。
